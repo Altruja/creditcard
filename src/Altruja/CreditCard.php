@@ -4,7 +4,7 @@ namespace Altruja;
 
 class CreditCard {
 
-  public $nr;
+  protected $nr,$luhn;
 
   public function __construct($nr) {
     $this->nr = $nr;
@@ -31,6 +31,12 @@ class CreditCard {
     return false;
   }
 
-}
+  public function valid() {
+    if ($this->luhn === null) {
+      $this->luhn = new \Nekman\LuhnAlgorithm\LuhnAlgorithm($this->nr);
+    }
+    return $this->luhn->isCompletelyValid() ? true : false;
+  }
 
+}
 

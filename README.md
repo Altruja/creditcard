@@ -11,6 +11,6 @@ Usage:
     // Detect type
     echo $c->type(); // "visa"
 
-    // Check plausability
-    echo $c->verify(); // true
+    // Verify checksum
+    echo $c->valid(); // true
 
