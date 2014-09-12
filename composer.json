@@ -10,9 +10,6 @@
   }],
   "autoload": {
       "psr-0": {"Altruja": "src/"}
-  },
-  "require": {
-    "nekman/luhn-algorithm": "2.*"
   }
 }
 

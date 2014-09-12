@@ -4,10 +4,10 @@ namespace Altruja;
 
 class CreditCard {
 
-  protected $nr,$luhn;
+  protected $nr;
 
   public function __construct($nr) {
-    $this->nr = $nr;
+    $this->nr = "$nr";
   }
 
   public function type() {
@@ -32,11 +32,21 @@ class CreditCard {
   }
 
   public function valid() {
-    if ($this->luhn === null) {
-      $this->luhn = new \Nekman\LuhnAlgorithm\LuhnAlgorithm($this->nr);
-    }
-    return $this->luhn->isCompletelyValid() ? true : false;
-  }
 
+    // source: https://gist.github.com/troelskn/1287893
+
+    $number = $this->nr;
+
+    settype($number, 'string');
+    $sumTable = array(
+      array(0,1,2,3,4,5,6,7,8,9),
+      array(0,2,4,6,8,1,3,5,7,9));
+    $sum = 0;
+    $flip = 0;
+    for ($i = strlen($number) - 1; $i >= 0; $i--) {
+      $sum += $sumTable[$flip++ & 0x1][$number[$i]];
+    }
+    return $sum % 10 === 0;
+  }
 }
 
