@@ -4,13 +4,40 @@ namespace Altruja;
 
 class CreditCard {
 
-  protected $nr;
+  protected $nr = null, $type = null, $name = null, $valid = null;
+
+  public $names = [
+    'visa' => 'Visa',
+    'mastercard' => 'MasterCard',
+    'amex' => 'American Express',
+    'discover' => 'Discover',
+    'diners' => 'Diner\'s Club',
+    'jcb' => 'JCB',
+    'any' => 'Unknown'
+  ];
 
   public function __construct($nr) {
     $this->nr = "$nr";
+  
+    $this->match();
+    $this->validate();
+
+    $this->name = isset($this->names[$this->type]) ? $this->names[$this->type] : false;
+  }
+  
+  public function type() {
+    return $this->type;
+  }
+  
+  public function name() {
+    return $this->name;
   }
 
-  public function type() {
+  public function valid() {
+    return $this->valid;
+  }
+
+  protected function match() {
 
     $patterns = [
       'visa' => '/^4[0-9]{12}(?:[0-9]{3})?$/',
@@ -24,15 +51,15 @@ class CreditCard {
 
     foreach ($patterns as $key=>$pattern) {
       if (preg_match($pattern, $this->nr)) {
-        return $key;
+        $this->type = $key;
+        return;
       }
     }
   
-    return false;
+    $this->type = false;
   }
 
-  public function valid() {
-
+  protected function validate() {
     // source: https://gist.github.com/troelskn/1287893
 
     $number = $this->nr;
@@ -46,7 +73,7 @@ class CreditCard {
     for ($i = strlen($number) - 1; $i >= 0; $i--) {
       $sum += $sumTable[$flip++ & 0x1][$number[$i]];
     }
-    return $sum % 10 === 0;
+    $this->valid = $sum % 10 === 0;
   }
 }
 
